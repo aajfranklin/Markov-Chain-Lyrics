@@ -128,7 +128,7 @@ while cont0 == "y":
 		print("*******************")
 		time.sleep(1)
 
-	first_word = validated_input("\nWhat would you like the first word to be? ", set(out.lower().split()))
+	first_word = validated_input("\nWhat would you like the first word to be? ", set(out.lower().split())).lower()
 	time.sleep(2)
 	chain = mc.generate_text(words_per_song, first_word)
 
