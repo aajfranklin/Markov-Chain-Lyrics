@@ -1,4 +1,4 @@
-#contains URLs for song lyrics, sorted in a dictionary, where the key is the album name and the value is the list of urls for song lyrics
+#contains URLs for song lyrics, sorted in a dictionary such that the index matches the user's seleciton
 
 albums = [
 "null",

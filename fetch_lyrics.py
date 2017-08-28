@@ -1,6 +1,6 @@
 #contains code to fetch text data
 
-#imports libraries etc..
+#import modules
 from urls import albums
 import urllib2
 
@@ -24,9 +24,16 @@ def fetch(lst):
 			end = raw.find(lyric_foot) - 4
 			lyrics = raw[start:end]
 			
-			#removes undesired words or html formatting from lyrics
+			#removes undesired words, punctuation, or html formatting from lyrics
 			strings_to_cut = [
-			"{{Instrumental}}"
+			"{{Instrumental}}",
+			"''",
+			'"',
+			"(",
+			")",
+			"?",
+			"...",
+			","
 			]
 
 			for x in strings_to_cut:

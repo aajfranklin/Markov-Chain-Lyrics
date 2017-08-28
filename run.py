@@ -1,13 +1,20 @@
-#run the project and output the text
+"""
 
-#imports libraries etc...
+RADIOHEAD MARKOV:
+Pick your album(s) and a single word to generate a new "Radiohead" song
+
+"""
+
+#imports modules
 from markov_python.cc_markov import MarkovChain
 from urls import albums
 from fetch_lyrics import fetch
 import time
 import win32com.client as wincl
 
-#function to get input from user and reprompt if user's input is not in pre-defined list of valid inputs
+
+
+#function takes input from user, checks the input against a list of valid inputs, and prompts the user again if their input is invalid
 def validated_input(prompt, valid_values):
     valid_input = False
     while not valid_input:
@@ -17,7 +24,7 @@ def validated_input(prompt, valid_values):
         valid_input = value.lower() in valid_values
     return value
 
-#function prompts the user to choose albums to emulate and outputs list of indicies corresponding to album dictionary indices in urls.py
+#function prompts the user to choose albums to emulate and outputs list of indices corresponding to album dictionary indices in urls.py
 def choose():
 	selections = []
 	print("\nOK, first pick the album(s) you want to emulate: \n")
@@ -42,7 +49,7 @@ def choose():
 				break
 	return selections
 
-#list of album for use in the choose function
+#list of albums for use in the choose function
 menu = [
 [0,"0 - All Albums"],
 [1,"1 - Pablo Honey"],
@@ -71,13 +78,13 @@ time.sleep(2)
 print(u"\n (\u00B0-\u00B0)") 
 time.sleep(2)
 
-#while loop determines whether user will run the core of the programme again after each use
+#while loop determines whether user will generate another song after each use
 cont0 = "y"
 while cont0 == "y":
 
 	selections = choose()
 
-#displays the users final selections
+#displays the user's final selections
 	if len(selections) == 9:
 		print("\nThank you. You chose All Albums - bold!")
 	elif len(selections) == 1:
@@ -87,7 +94,7 @@ while cont0 == "y":
 	else:
 		print("\nThank you. You chose %s, and %s." %(", ".join([menu[x][1][4:] for x in selections[:len(selections)-1]]),menu[selections[len(selections)-1]][1][4:]))
 
-#fetches lyrics for the users selection, assures user of load time, gives user option to view lyrics
+#fetches lyrics for the user's selection, assures user of load time
 	time.sleep(1)
 	print("\nI'm just fetching the original lyrics for your selection from 'lyrics.wikia.com'. The more albums you chose, the longer this will take.")
 	out = fetch(selections)
@@ -96,7 +103,7 @@ while cont0 == "y":
 
 #below we generate the markov chain
 
-#first we assign values for words per son and words per line for later use in the Markov Chain
+#first we assign values for words per song and words per line for later use in the Markov Chain
 	num_songs = sum([len(albums[x]) for x in selections])
 	num_lines = len(out.splitlines())
 	num_words = len(out.split())
@@ -108,7 +115,7 @@ while cont0 == "y":
 	mc = MarkovChain()
 	mc.add_string(out)
 
-#prompt the user for the first word of the song and generate the chain
+#prompts the user for the first word of the song, with the option to view available words, and generate the chain
 	time.sleep(1)
 	print("\nRight, let's move on to your new song. It's time to write the first word!")
 	print("Note that the word has to be in your chosen album(s) original lyrics at least once, else I can't generate a new song from it.")
@@ -122,10 +129,8 @@ while cont0 == "y":
 		time.sleep(1)
 
 	first_word = validated_input("\nWhat would you like the first word to be? ", set(out.lower().split()))
-	first_word = first_word[0].upper() + first_word.lower()[1:]
 	time.sleep(2)
 	chain = mc.generate_text(words_per_song, first_word)
-
 
 #formats chain to better resemble song lyrics
 	song = []
@@ -156,11 +161,11 @@ while cont0 == "y":
 #joins the distinct lines of the song so they can be read by text to speech module
 	speak = wincl.Dispatch("SAPI.SpVoice")
 
-#prepares user for song and provides short false load
+#asks the user if they are ready to hear the song
 	raw_input("\nOK, your song is ready. Press enter when you are ready to hear it.\n")
 	print("\n (^o^) < ...oooOOO000\n")
 
-#prints song with split verses
+#prints the song line by line, speaking the lyrics after each verse
 	while len(song) >= verse_length:
 		for line in song[:verse_length]:
 			print(line)
@@ -169,6 +174,7 @@ while cont0 == "y":
 		speak.Speak(" ".join(song[:verse_length]))
 		song = song[verse_length:]
 
+#closing message that reflects the user's selections
 	time.sleep(2)
 	if len(selections) == 9:
 		print("\nWow, just like a song from all Radiohead albums combined... I hope you enjoyed it!")
@@ -179,6 +185,7 @@ while cont0 == "y":
 	else:
 		print("\nWow, just like a song from %s, and %s combined... I hope you enjoyed it!" %(", ".join([menu[x][1][4:] for x in selections[:len(selections)-1]]),menu[selections[len(selections)-1]][1][4:]))
 
+#prompt the user to generate another song or end the programme
 	time.sleep(2)
 	cont0 = validated_input("\nWould you like to write another song (y/n)? ", ["y","n"])
 	time.sleep(1)

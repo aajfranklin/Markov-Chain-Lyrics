@@ -63,15 +63,16 @@ class MarkovChain:
   " Generates text based on the data the Markov Chain contains
   " max_length is the maximum number of words to generate
   """
+
+#function edited to set chain head to a valid tuple for the user's chosen word, regardless of number of key words
+
   def generate_text(self, max_length,first_word):
     context = deque()
-    output = [first_word]
+    first_word_tuples = [key for key in self.lookup_dict if first_word in key and key[0] == first_word]
+    context.extend(first_word_tuples[random.randint(0,len(first_word_tuples)-1)])
+    output = []
     if len(self.lookup_dict) > 0:
       self.__seed_me(rand_seed=len(self.lookup_dict))
-
-      idx = random.randint(0, len(self.lookup_dict)-1)
-      chain_head = list(self.lookup_dict.keys()[idx])
-      context.extend(chain_head)
 
       while len(output) < (max_length - self.num_key_words):
         next_choices = self.lookup_dict[tuple(context)]
@@ -83,5 +84,3 @@ class MarkovChain:
           break
       output.extend(list(context))
     return output
-
-#added word to paramters and word to starting output
