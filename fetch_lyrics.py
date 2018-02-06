@@ -1,4 +1,4 @@
-#contains code to fetch text data
+#contains code to fetch lyric text data
 
 #import modules
 from urls import albums
